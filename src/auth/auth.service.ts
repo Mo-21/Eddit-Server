@@ -44,6 +44,7 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     const { email, password } = dto;
+
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
@@ -51,7 +52,7 @@ export class AuthService {
 
       if (!user) return new NotFoundException('User not found');
 
-      const passwordMatch = await argon.verify(password, user.hashedPassword);
+      const passwordMatch = await argon.verify(user.hashedPassword, password);
 
       if (!passwordMatch) return new ForbiddenException('Incorrect Password');
 
