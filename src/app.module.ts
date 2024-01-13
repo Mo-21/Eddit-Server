@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PostModule } from './post/post.module';
-import { PostNoSpecController } from './post-no-spec/post-no-spec.controller';
+import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PostModule],
-  controllers: [PostNoSpecController],
-  providers: [],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PostModule, PrismaModule],
 })
 export class AppModule {}
