@@ -2,9 +2,10 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EditPostDto, PostDto } from './dto';
+import { DeletePostDto, EditPostDto, PostDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -74,6 +75,44 @@ export class PostService {
         return new InternalServerErrorException('Something went wrong');
 
       return newPost;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new ForbiddenException('Credentials must be provided');
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async deletePost(postId: { id: string }, dto: DeletePostDto) {
+    const { userId } = dto;
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+      });
+
+      console.log(postId.id);
+
+      if (!user) return new ForbiddenException('No user found');
+
+      const post = await this.prisma.post.findUnique({
+        where: {
+          id: parseInt(postId.id),
+        },
+      });
+
+      if (!post) return new ForbiddenException('No post found');
+
+      if (post.userId !== parseInt(userId))
+        return new UnauthorizedException('You can only delete your own post');
+
+      await this.prisma.post.delete({
+        where: {
+          id: post.id,
+        },
+      });
+
+      return;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new ForbiddenException('Credentials must be provided');

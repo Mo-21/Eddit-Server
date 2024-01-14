@@ -17,11 +17,17 @@ export class EditPostDto {
   @Length(1, 4_000_000)
   content: string;
 
-  @IsString({ message: 'userId must be a string' })
-  @IsNotEmpty({ message: 'userId is required' })
+  @IsString({ message: 'user Id must be a string' })
+  @IsNotEmpty({ message: 'user Id is required' })
   userId: string;
 
-  @IsString({ message: 'userId must be a string' })
-  @IsNotEmpty({ message: 'userId is required' })
+  @IsString({ message: 'Post id must be a string' })
+  @IsNotEmpty({ message: 'Post id is required' })
   postId: string;
+}
+
+export class DeletePostDto {
+  @IsString({ message: 'user Id must be a string' })
+  @IsNotEmpty({ message: 'user Id is required' })
+  userId: string;
 }
