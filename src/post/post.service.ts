@@ -91,8 +91,6 @@ export class PostService {
         where: { id: parseInt(userId) },
       });
 
-      console.log(postId.id);
-
       if (!user) return new ForbiddenException('No user found');
 
       const post = await this.prisma.post.findUnique({
