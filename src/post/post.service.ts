@@ -14,7 +14,14 @@ export class PostService {
 
   async getAllPosts() {
     try {
-      const posts = await this.prisma.post.findMany();
+      const posts = await this.prisma.post.findMany({
+        include: {
+          User: {
+            select: { avatar: true, username: true, id: true },
+          },
+        },
+      });
+
       return posts;
     } catch (error) {
       throw error;
