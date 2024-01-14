@@ -10,3 +10,18 @@ export class PostDto {
   @IsNotEmpty({ message: 'userId is required' })
   userId: string;
 }
+
+export class EditPostDto {
+  @IsString({ message: 'Content must be a string' })
+  @IsNotEmpty({ message: 'Content is required' })
+  @Length(1, 4_000_000)
+  content: string;
+
+  @IsString({ message: 'userId must be a string' })
+  @IsNotEmpty({ message: 'userId is required' })
+  userId: string;
+
+  @IsString({ message: 'userId must be a string' })
+  @IsNotEmpty({ message: 'userId is required' })
+  postId: string;
+}

@@ -3,11 +3,12 @@ import {
   Controller,
   Get,
   HttpCode,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { PostDto } from './dto/post.dto';
+import { EditPostDto, PostDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 
 @Controller('post')
@@ -24,5 +25,12 @@ export class PostController {
   @Post('create')
   createPost(@Body() dto: PostDto) {
     return this.postService.createPost(dto);
+  }
+
+  @UseGuards(JwtGuard)
+  @HttpCode(201)
+  @Patch(':id/edit')
+  editPost(@Body() dto: EditPostDto) {
+    return this.postService.editPost(dto);
   }
 }
