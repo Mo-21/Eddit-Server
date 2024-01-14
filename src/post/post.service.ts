@@ -21,11 +21,19 @@ export class PostService {
   }
 
   async createPost(dto: PostDto) {
+    const { content, userId } = dto;
+
     try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+      });
+
+      if (!user) return new ForbiddenException('No user found');
+
       const newPost = await this.prisma.post.create({
         data: {
-          content: dto.content,
-          userId: dto.userId,
+          content,
+          userId: parseInt(userId),
         },
       });
 
@@ -36,6 +44,8 @@ export class PostService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new ForbiddenException('Credentials must be provided');
+      } else {
+        throw error;
       }
     }
   }
