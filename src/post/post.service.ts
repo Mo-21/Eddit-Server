@@ -12,8 +12,10 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class PostService {
   constructor(private prisma: PrismaService) {}
 
-  async getAllPosts() {
+  async getAllPosts(size: string, page: number) {
+    const pageSize = parseInt(size);
     try {
+      const skip = (page - 1) * pageSize;
       const posts = await this.prisma.post.findMany({
         include: {
           User: {
@@ -23,9 +25,16 @@ export class PostService {
         orderBy: {
           createdAt: 'desc',
         },
+        skip,
+        take: pageSize,
       });
 
-      return posts;
+      const totalPosts = await this.prisma.post.count();
+      console.log({ totalPosts, pageSize, skip });
+      const hasMore = skip + pageSize < totalPosts;
+
+      console.log({ hasMore });
+      return { posts, hasMore };
     } catch (error) {
       throw error;
     }
