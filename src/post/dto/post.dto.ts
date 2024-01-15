@@ -6,9 +6,8 @@ export class PostDto {
   @Length(1, 4_000_000)
   content: string;
 
-  @IsString({ message: 'userId must be a string' })
   @IsNotEmpty({ message: 'userId is required' })
-  userId: string;
+  userId: number;
 }
 
 export class EditPostDto {
