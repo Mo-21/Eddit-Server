@@ -22,7 +22,6 @@ export class PostController {
     return this.postService.getAllPosts();
   }
 
-  @UseGuards(JwtGuard)
   @HttpCode(201)
   @Post('create')
   createPost(@Body() dto: PostDto) {
