@@ -1,9 +1,5 @@
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { LoginDto, RegistrationDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -43,7 +39,7 @@ export class AuthService {
     }
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto, res: Response) {
     const { email, password } = dto;
 
     try {
@@ -51,21 +47,21 @@ export class AuthService {
         where: { email },
       });
 
-      if (!user) return new NotFoundException('User not found');
+      if (!user) return res.status(400).json('User not found');
 
       const passwordMatch = await argon.verify(user.hashedPassword, password);
 
-      if (!passwordMatch) return new ForbiddenException('Incorrect Password');
+      console.log({ passwordMatch });
+      if (!passwordMatch) return res.status(403).json('Incorrect Password');
 
       delete user.hashedPassword;
-
-      return user;
+      if (user && passwordMatch) return user;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002')
-          throw new ForbiddenException('Credentials must be unique');
+          return res.status(400).json('Credentials must be unique');
       }
-      throw new InternalServerErrorException('Internal Server Error');
+      return res.status(500).json('Something went wrong');
     }
   }
 
