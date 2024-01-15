@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { LoginDto, RegistrationDto } from './dto';
@@ -56,12 +57,15 @@ export class AuthService {
 
       if (!passwordMatch) return new ForbiddenException('Incorrect Password');
 
-      return this.signToken(user.id, user.email);
+      delete user.hashedPassword;
+
+      return user;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002')
           throw new ForbiddenException('Credentials must be unique');
       }
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
