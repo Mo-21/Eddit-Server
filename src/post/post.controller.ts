@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
@@ -18,8 +19,12 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get('all')
-  getAllPosts() {
-    return this.postService.getAllPosts();
+  getAllPosts(
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: string,
+  ) {
+    console.log({ pageSize, page });
+    return this.postService.getAllPosts(pageSize, page);
   }
 
   @HttpCode(201)
