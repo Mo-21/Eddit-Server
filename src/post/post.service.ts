@@ -30,10 +30,8 @@ export class PostService {
       });
 
       const totalPosts = await this.prisma.post.count();
-      console.log({ totalPosts, pageSize, skip });
       const hasMore = skip + pageSize < totalPosts;
 
-      console.log({ hasMore });
       return { posts, hasMore };
     } catch (error) {
       throw error;

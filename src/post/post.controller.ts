@@ -23,7 +23,6 @@ export class PostController {
     @Query('page') page: number,
     @Query('pageSize') pageSize: string,
   ) {
-    console.log({ pageSize, page });
     return this.postService.getAllPosts(pageSize, page);
   }
 
