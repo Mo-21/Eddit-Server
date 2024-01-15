@@ -51,11 +51,10 @@ export class AuthService {
 
       const passwordMatch = await argon.verify(user.hashedPassword, password);
 
-      console.log({ passwordMatch });
       if (!passwordMatch) return res.status(403).json('Incorrect Password');
 
       delete user.hashedPassword;
-      if (user && passwordMatch) return user;
+      return res.status(200).json(user);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002')
