@@ -20,6 +20,9 @@ export class PostService {
             select: { avatar: true, username: true, id: true },
           },
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
 
       return posts;
@@ -30,10 +33,9 @@ export class PostService {
 
   async createPost(dto: PostDto) {
     const { content, userId } = dto;
-
     try {
       const user = await this.prisma.user.findUnique({
-        where: { id: parseInt(userId) },
+        where: { id: userId },
       });
 
       if (!user) return new ForbiddenException('No user found');
@@ -41,7 +43,12 @@ export class PostService {
       const newPost = await this.prisma.post.create({
         data: {
           content,
-          userId: parseInt(userId),
+          userId: userId,
+        },
+        include: {
+          User: {
+            select: { avatar: true, username: true, id: true },
+          },
         },
       });
 
