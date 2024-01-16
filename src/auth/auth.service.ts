@@ -53,8 +53,8 @@ export class AuthService {
       if (!passwordMatch) return res.status(403).json('Incorrect Password');
 
       delete user.hashedPassword;
-      const token = await this.signToken(user.id, user.email);
-      res.cookie('token', token.token);
+
+      res.cookie('token', await this.signToken(user.id, user.email));
       return res.status(200).json(user);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -74,6 +74,6 @@ export class AuthService {
       },
     );
 
-    return { token };
+    return token;
   }
 }
