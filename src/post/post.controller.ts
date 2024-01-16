@@ -19,7 +19,6 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get('all')
-  @UseGuards(JwtGuard)
   getAllPosts(
     @Query('page') page: number,
     @Query('pageSize') pageSize: string,
@@ -27,6 +26,7 @@ export class PostController {
     return this.postService.getAllPosts(pageSize, page);
   }
 
+  @UseGuards(JwtGuard)
   @HttpCode(201)
   @Post('create')
   createPost(@Body() dto: PostDto) {
@@ -34,12 +34,14 @@ export class PostController {
   }
 
   @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(201)
   @Patch(':id/edit')
   editPost(@Body() dto: EditPostDto) {
     return this.postService.editPost(dto);
   }
 
+  @UseGuards(JwtGuard)
   @UseGuards(JwtGuard)
   @HttpCode(200)
   @Delete(':id/delete')
