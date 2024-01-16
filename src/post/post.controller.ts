@@ -19,6 +19,7 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get('all')
+  @UseGuards(JwtGuard)
   getAllPosts(
     @Query('page') page: number,
     @Query('pageSize') pageSize: string,
