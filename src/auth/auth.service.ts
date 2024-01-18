@@ -65,6 +65,11 @@ export class AuthService {
     }
   }
 
+  logout(res: Response) {
+    res.cookie('token', null);
+    return res.status(200).json('logged out successfully');
+  }
+
   async signToken(userId: number, email: string) {
     const token = await this.jwt.signAsync(
       { userId, email },
