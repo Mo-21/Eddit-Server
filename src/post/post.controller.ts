@@ -4,14 +4,13 @@ import {
   Delete,
   Get,
   HttpCode,
-  Param,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { DeletePostDto, EditPostDto, PostDto } from './dto';
+import { EditPostDto, PostDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 
 @Controller('post')
@@ -44,7 +43,7 @@ export class PostController {
   @UseGuards(JwtGuard)
   @HttpCode(200)
   @Delete(':id/delete')
-  deletePost(@Param() postId: { id: string }, @Body() dto: DeletePostDto) {
-    return this.postService.deletePost(postId, dto);
+  deletePost(@Query('postId') postId: string, @Query('userId') userId: string) {
+    return this.postService.deletePost(postId, userId);
   }
 }

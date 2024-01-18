@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DeletePostDto, EditPostDto, PostDto } from './dto';
+import { EditPostDto, PostDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -13,7 +13,6 @@ export class PostService {
   constructor(private prisma: PrismaService) {}
 
   async getAllPosts(size: string, page: number, userId?: string) {
-    console.log(size, userId, page);
     const pageSize = parseInt(size);
     const id = parseInt(userId);
     try {
@@ -32,7 +31,6 @@ export class PostService {
         take: pageSize,
       });
 
-      console.log(posts);
       const totalPosts = await this.prisma.post.count();
       const hasMore = skip + pageSize < totalPosts;
 
@@ -109,8 +107,7 @@ export class PostService {
     }
   }
 
-  async deletePost(postId: { id: string }, dto: DeletePostDto) {
-    const { userId } = dto;
+  async deletePost(postId: string, userId: string) {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id: parseInt(userId) },
@@ -120,7 +117,7 @@ export class PostService {
 
       const post = await this.prisma.post.findUnique({
         where: {
-          id: parseInt(postId.id),
+          id: parseInt(postId),
         },
       });
 
