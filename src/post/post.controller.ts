@@ -34,14 +34,12 @@ export class PostController {
   }
 
   @UseGuards(JwtGuard)
-  @UseGuards(JwtGuard)
   @HttpCode(201)
   @Patch(':id/edit')
   editPost(@Body() dto: EditPostDto) {
     return this.postService.editPost(dto);
   }
 
-  @UseGuards(JwtGuard)
   @UseGuards(JwtGuard)
   @HttpCode(200)
   @Delete(':id/delete')
