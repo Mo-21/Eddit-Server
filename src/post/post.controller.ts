@@ -22,8 +22,9 @@ export class PostController {
   getAllPosts(
     @Query('page') page: number,
     @Query('pageSize') pageSize: string,
+    @Query('userId') userId?: string,
   ) {
-    return this.postService.getAllPosts(pageSize, page);
+    return this.postService.getAllPosts(pageSize, page, userId);
   }
 
   @UseGuards(JwtGuard)
