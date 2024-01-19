@@ -15,7 +15,7 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async register(dto: RegistrationDto) {
+  async register(dto: RegistrationDto, res: Response) {
     const { email, password, username, avatar } = dto;
 
     const hashedPassword = await argon.hash(password);
@@ -29,7 +29,12 @@ export class AuthService {
           avatar,
         },
       });
-      return newUser;
+
+      delete newUser.hashedPassword;
+
+      res.cookie('token', await this.signToken(newUser.id, newUser.email));
+
+      return res.status(201).json(newUser);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002')

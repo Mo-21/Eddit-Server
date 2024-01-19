@@ -7,8 +7,8 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('register')
-  register(@Body() dto: RegistrationDto) {
-    return this.authService.register(dto);
+  register(@Body() dto: RegistrationDto, @Res() res: Response) {
+    return this.authService.register(dto, res);
   }
 
   @Post('login')
