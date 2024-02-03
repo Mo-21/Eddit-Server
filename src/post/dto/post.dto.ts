@@ -30,3 +30,11 @@ export class DeletePostDto {
   @IsNotEmpty({ message: 'user Id is required' })
   userId: string;
 }
+
+export class LikeDto {
+  @IsNotEmpty({ message: 'User id is required' })
+  userId: string;
+
+  @IsNotEmpty({ message: 'Post id is required' })
+  postId: string;
+}

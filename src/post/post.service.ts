@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EditPostDto, PostDto } from './dto';
+import { EditPostDto, LikeDto, PostDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -138,6 +138,60 @@ export class PostService {
         throw new ForbiddenException('Credentials must be provided');
       } else {
         throw error;
+      }
+    }
+  }
+  async likePost(dto: LikeDto) {
+    const post = await this.prisma.post.findUnique({
+      where: { id: parseInt(dto.postId) },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: parseInt(dto.userId) },
+      include: { likedPosts: true }, // Include the current likedPosts
+    });
+
+    if (!user || !post) {
+      return new ForbiddenException('No post or user found');
+    }
+
+    const isAlreadyLiked = user.likedPosts.some(
+      (likedPost) => likedPost.id === parseInt(dto.postId),
+    );
+
+    if (!isAlreadyLiked) {
+      try {
+        await this.prisma.user.update({
+          where: { id: parseInt(dto.userId) },
+          data: {
+            likedPosts: {
+              connect: { id: post.id },
+            },
+          },
+        });
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new ForbiddenException('Credentials must be provided');
+        } else {
+          throw error;
+        }
+      }
+    } else {
+      try {
+        await this.prisma.user.update({
+          where: { id: parseInt(dto.userId) },
+          data: {
+            likedPosts: {
+              disconnect: { id: post.id },
+            },
+          },
+        });
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new ForbiddenException('Credentials must be provided');
+        } else {
+          throw error;
+        }
       }
     }
   }

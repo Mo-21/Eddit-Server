@@ -6,11 +6,12 @@ import {
   HttpCode,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { EditPostDto, PostDto } from './dto';
+import { EditPostDto, LikeDto, PostDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 
 @Controller('post')
@@ -45,5 +46,12 @@ export class PostController {
   @Delete(':id/delete')
   deletePost(@Query('postId') postId: string, @Query('userId') userId: string) {
     return this.postService.deletePost(postId, userId);
+  }
+
+  // @UseGuards(JwtGuard)
+  @HttpCode(200)
+  @Put(':id/like')
+  likePost(@Body() dto: LikeDto) {
+    return this.postService.likePost(dto);
   }
 }
