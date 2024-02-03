@@ -23,6 +23,9 @@ export class PostService {
           User: {
             select: { avatar: true, username: true, id: true },
           },
+          likers: {
+            select: { id: true },
+          },
         },
         orderBy: {
           createdAt: 'desc',
